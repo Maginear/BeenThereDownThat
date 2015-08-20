@@ -57,5 +57,4 @@
                 android:value="magi.myfirappinair.QuizActivity" />
         </activity>
     </application>
-
 </manifest>

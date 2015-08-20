@@ -22,7 +22,7 @@ public class QuizMenuActvity extends QuizActivity {
             getResources().getString(R.string.menu_item_scores),
             getResources().getString(R.string.menu_item_settings),
             getResources().getString(R.string.menu_item_help)};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.menu_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.menu_item, items);
 
         menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -32,15 +32,19 @@ public class QuizMenuActvity extends QuizActivity {
                 if (strText.equalsIgnoreCase(getResources().getString(R.string.menu_item_play))) {
                     //Launch the Game Activity
                     startActivity(new Intent(QuizMenuActvity.this, QuizGameActivity.class));
+                    finish();
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.menu_item_scores))) {
                     //Launch the Scores Activity
                     startActivity(new Intent(QuizMenuActvity.this, QuizScoresActivity.class));
+                    finish();
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.menu_item_settings))) {
                     //Launch the Setting Activity
                     startActivity(new Intent(QuizMenuActvity.this, QuizSettingsActivity.class));
+                    finish();
                 } else if (strText.equalsIgnoreCase(getResources().getString(R.string.menu_item_help))) {
                     //Launch the Scores Activity
                     startActivity(new Intent(QuizMenuActvity.this, QuizHelpActivity.class));
+                    finish();
                 }
             }
         });

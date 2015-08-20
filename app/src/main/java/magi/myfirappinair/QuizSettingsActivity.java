@@ -20,8 +20,7 @@ import java.util.prefs.PreferenceChangeEvent;
 
 public class QuizSettingsActivity extends QuizActivity {
 
-    SharedPreferences mGameSettings;
-    SharedPreferences.Editor editor = mGameSettings.edit();
+
     private static final String DEBUG_TAG = "MyActivity Preferences";
 
     @Override
@@ -29,12 +28,17 @@ public class QuizSettingsActivity extends QuizActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_settings);
 
+
+
         Spinner spinner = (Spinner) findViewById(R.id.Spinner_Gender);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SharedPreferences mGameSettings = getSharedPreferences(
+                        GAME_PREFERENCES, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = mGameSettings.edit();
                 editor.putInt(GAME_PREFERENCES_GENDER, position);
-                editor.commit();
+                editor.apply();
             }
 
             @Override
@@ -44,8 +48,7 @@ public class QuizSettingsActivity extends QuizActivity {
         });
         spinner.setSelection(2);
 
-        mGameSettings = getSharedPreferences(GAME_PREFERENCES, Context.MODE_PRIVATE);
-        readPreferences(mGameSettings);
+        readPreferences();
     }
 
     @Override
@@ -83,22 +86,28 @@ public class QuizSettingsActivity extends QuizActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        SharedPreferences mGameSettings = getSharedPreferences(
+                GAME_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mGameSettings.edit();
 
         //TODO get the contents of all preferences and save them
-
         final EditText nicknameText = (EditText) findViewById(R.id.EditText_Nickname);
         final EditText emailText = (EditText) findViewById(R.id.EditText_Email);
         String strNickname = nicknameText.getText().toString();
         String strEmail = emailText.getText().toString();
 
         editor.putString(GAME_PREFERENCES_EMAIL, strEmail);
+        editor.apply();
         editor.putString(GAME_PREFERENCES_NICKNAME, strNickname);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        SharedPreferences mGameSettings = getSharedPreferences(
+                GAME_PREFERENCES, Context.MODE_PRIVATE);
+
         Log.d(DEBUG_TAG, "SHARED PREFERENCES");
         Log.d(DEBUG_TAG, "Nickname is: " + mGameSettings.getString(
                 GAME_PREFERENCES_NICKNAME, "Not set"));
@@ -113,7 +122,10 @@ public class QuizSettingsActivity extends QuizActivity {
                 "MMMM dd, yyyy", mGameSettings.getLong(GAME_PREFERENCES_DOB, 0)));
     }
 
-    public void readPreferences(SharedPreferences mGameSettings){
+    public void readPreferences(){
+        SharedPreferences mGameSettings = getSharedPreferences(
+                GAME_PREFERENCES, Context.MODE_PRIVATE);
+
         final EditText nicknameText = (EditText) findViewById(R.id.EditText_Nickname);
         final EditText emailText = (EditText) findViewById(R.id.EditText_Email);
         final TextView passwordText = (TextView) findViewById(R.id.TextViewPassword);
