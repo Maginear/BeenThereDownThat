@@ -48,9 +48,11 @@
 
     <string name="set_password_ok">Got Password</string>
     <string name="set_password_no">No Password</string>
+    <string name="settings_pwd_equal">Passwords match</string>
+    <string name="settings_pwd_not_equal">Passwords do not match, please try again.</string>
 
     <string name="set_email">Set Email</string>
     <string name="set_nickname">Set Nickname</string>
     <string name="set_birth">Set BirthDate</string>
-
+    <string name="set_password">Set Password</string>
 </resources>

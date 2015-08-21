@@ -1,15 +1,21 @@
 package magi.myfirappinair;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,6 +34,7 @@ public class QuizSettingsActivity extends QuizActivity {
 
     private static final String DEBUG_TAG = "MyActivity Preferences";
     private static final int DATE_DIALOG_ID = 0;
+    private static final int PASSWORD_DIALOG_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +90,7 @@ public class QuizSettingsActivity extends QuizActivity {
     }
 
     public void onSetPasswordButtonClick(View view){
+        showDialog(PASSWORD_DIALOG_ID);
         Toast.makeText(QuizSettingsActivity.this, "TODO: Launch Password Dialog",
                 Toast.LENGTH_LONG).show();
     }
@@ -127,7 +135,7 @@ public class QuizSettingsActivity extends QuizActivity {
         SharedPreferences mGameSettings = getSharedPreferences(GAME_PREFERENCES, Context.MODE_PRIVATE);
         final EditText nicknameText = (EditText) findViewById(R.id.EditText_Nickname);
         final EditText emailText = (EditText) findViewById(R.id.EditText_Email);
-        final TextView passwordText = (TextView) findViewById(R.id.TextViewPassword);
+        final TextView passwordText = (TextView) findViewById(R.id.TextView_Password_Info);
         final TextView birthDateText = (TextView) findViewById(R.id.TextViewBirthDate);
         final Spinner genderSpinner = (Spinner) findViewById(R.id.Spinner_Gender);
 
@@ -138,10 +146,11 @@ public class QuizSettingsActivity extends QuizActivity {
             emailText.setText(mGameSettings.getString(GAME_PREFERENCES_EMAIL, ""));
         }
         if (mGameSettings.contains(GAME_PREFERENCES_PASSWORD)) {
-            passwordText.setText(mGameSettings.getString(GAME_PREFERENCES_NICKNAME, ""));
+            passwordText.setText(mGameSettings.getString(GAME_PREFERENCES_PASSWORD, ""));
         }
         if (mGameSettings.contains(GAME_PREFERENCES_DOB)) {
-            birthDateText.setText(Long.toString(mGameSettings.getLong(GAME_PREFERENCES_DOB, 0)));
+            long longDOB = mGameSettings.getLong(GAME_PREFERENCES_DOB, 0);
+            birthDateText.setText(android.text.format.DateFormat.format("MMMM dd, yyyy", longDOB));
         }
         if (mGameSettings.contains(GAME_PREFERENCES_GENDER)) {
             genderSpinner.setSelection(mGameSettings.getInt(GAME_PREFERENCES_GENDER, 0));
@@ -152,9 +161,8 @@ public class QuizSettingsActivity extends QuizActivity {
     protected Dialog onCreateDialog(int id) {
         SharedPreferences mGameSettings = getSharedPreferences(GAME_PREFERENCES, Context.MODE_PRIVATE);
         switch (id) {
-            case DATE_DIALOG_ID:
-                //TODO Return a DatePickerDialog here
 
+            case DATE_DIALOG_ID: {
                 final SharedPreferences.Editor editor = mGameSettings.edit();
                 final TextView dob = (TextView) findViewById(R.id.TextViewBirthDate);
                 Calendar now = Calendar.getInstance();
@@ -171,15 +179,88 @@ public class QuizSettingsActivity extends QuizActivity {
                             }
                         }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
                 return dateDialog;
+            }
+
+            case PASSWORD_DIALOG_ID: {
+                //Build and return Dialog
+                LayoutInflater inflater = (LayoutInflater) getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
+                final View layout = inflater.inflate(R.layout.password_dialog,
+                        (ViewGroup) findViewById(R.id.root));
+                final EditText p1 = (EditText) layout.findViewById(R.id.EditText_Pwd1);
+                final EditText p2 = (EditText) layout.findViewById(R.id.EditText_Pwd2);
+                final TextView error = (TextView) layout.findViewById(R.id.TextView_PwdProblem);
+                p2.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        String strPass1 = p1.getText().toString();
+                        String strPass2 = p2.getText().toString();
+                        if (strPass1.equals(strPass2)) {
+                            error.setText(R.string.settings_pwd_equal);
+                            error.setTextColor(getResources().getColor(R.color.title_color));
+                        } else {
+                            error.setText(R.string.settings_pwd_not_equal);
+                            error.setTextColor(getResources().getColor(R.color.error_color));
+                        }
+                    }
+                });
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setView(layout);
+                builder.setTitle(R.string.set_password);
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TextView passwordInfo = (TextView) findViewById(
+                                R.id.TextView_Password_Info);
+                        String strPassword1 = p1.getText().toString();
+                        String strPassword2 = p2.getText().toString();
+                        if (strPassword1.equals(strPassword2)) {
+                            SharedPreferences mGameSettings = getSharedPreferences(
+                                    GAME_PREFERENCES, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = mGameSettings.edit();
+                            editor.putString(GAME_PREFERENCES_PASSWORD, strPassword1);
+                            editor.commit();
+                            passwordInfo.setText(strPassword1);
+                        } else {
+                            Log.d(DEBUG_TAG, "Passwords do not match. " +
+                                    "Not saving. Keeping old password (if set).");
+                            Toast.makeText(QuizSettingsActivity.this, "Not saving \n Passwords do not match",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        QuizSettingsActivity.this.dismissDialog(PASSWORD_DIALOG_ID);
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                QuizSettingsActivity.this.removeDialog(PASSWORD_DIALOG_ID);
+                            }
+                        });
+                AlertDialog passwordDialog = builder.create();
+                return passwordDialog;
+
+            }
         }
         return super.onCreateDialog(id);
     }
 
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
-        SharedPreferences mGameSettings = getSharedPreferences(GAME_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences mGameSettings = getSharedPreferences(GAME_PREFERENCES,
+                Context.MODE_PRIVATE);
         switch (id) {
-            case DATE_DIALOG_ID:
+            case DATE_DIALOG_ID: {
                 //Handle any DatePickerDialog initialization here
                 DatePickerDialog dateDialog = (DatePickerDialog) dialog;
                 int iDay, iMonth, iYear;
@@ -201,6 +282,18 @@ public class QuizSettingsActivity extends QuizActivity {
                 }
                 // Set the date in the DatePicker to te date of birth OR the current date
                 dateDialog.updateDate(iYear, iMonth, iDay);
+                break;
+            }
+           /* case PASSWORD_DIALOG_ID: {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
+                final View layout = inflater.inflate(R.layout.password_dialog,
+                        (ViewGroup) findViewById(R.id.root));
+                final EditText p1 = (EditText) layout.findViewById(R.id.EditText_Pwd1);
+                if (mGameSettings.contains(GAME_PREFERENCES_PASSWORD)) {
+                    p1.setText(mGameSettings.getString(GAME_PREFERENCES_PASSWORD, ""));
+                }
+            }*/
         }
         super.onPrepareDialog(id, dialog);
     }
