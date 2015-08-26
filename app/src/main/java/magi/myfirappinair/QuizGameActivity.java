@@ -9,16 +9,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageSwitcher;
-import android.widget.ImageView;
 import android.widget.TextSwitcher;
-import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -54,13 +53,44 @@ public class QuizGameActivity extends QuizActivity {
         mQuestionImage.setFactory(new MyImageSwitcherFactory());
 
         mQuestionText.setCurrentText("First Question Text");
-        //mQuestionImage.setImageDrawable();
+        //mQuestionImage.setImageDrawable;
 
+        // Initialize the Shared preferences
+        if (startQuestionNumber == 0) {
+            SharedPreferences.Editor editor = mGameSettings.edit();
+            editor.putInt(GAME_PREFERENCES_CURRENT_QUESTION, 1);
+            editor.apply();
+            startQuestionNumber = 1;
+        }
+
+
+        // Load the question
+        try {
+            loadQuestionBatch(startQuestionNumber);
+        } catch (Exception e) {
+            Log.e(DEBUG_TAG, "Loading initial question batch failed", e);
+        }
+
+
+        // If the question was loaded properly, display it
+        if (mQuestions.containsKey(startQuestionNumber)) {
+            // Set the text of the textSwitcher
+            mQuestionText.setCurrentText(getQuestionText(startQuestionNumber));
+
+            // Set the image of the imageSwitcher
+            Drawable image = getQuestionImageDrawable(startQuestionNumber);
+            mQuestionImage.setImageDrawable(image);
+        } else {
+            // Tell the user we don't have any new questions at this time
+            handleNoQuestions();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu);
+
         getMenuInflater().inflate(R.menu.menu_quiz_game, menu);
 
         menu.findItem(R.id.help_menu_item).setIntent(new Intent(
@@ -90,29 +120,47 @@ public class QuizGameActivity extends QuizActivity {
     private class MyImageSwitcherFactory implements ViewSwitcher.ViewFactory {
         @Override
         public View makeView() {
-            ImageView imageView = (ImageView) LayoutInflater.from(
+            return LayoutInflater.from(
                     getApplicationContext()).inflate(R.layout.image_switcher_view,
                     mQuestionImage, false);
-            return imageView;
         }
     }
 
     private class MyTextSwitcherFactory implements ViewSwitcher.ViewFactory {
         @Override
         public View makeView() {
-            TextView textView = (TextView) LayoutInflater.from(
+            return LayoutInflater.from(
                     getApplicationContext()).inflate(R.layout.text_switcher_view,
                     mQuestionText, false);
-            return textView;
 
         }
     }
 
-    public void onYesButton(View view) {
-        mQuestionText.setCurrentText("First Question Text");
+    private void handleNoQuestions() {
+        TextSwitcher questionTextSwitcher = (TextSwitcher) findViewById(R.id.TextSwitcher_QuestionText);
+        questionTextSwitcher.setText(getResources().getText(R.string.no_questions));
+        ImageSwitcher questionImageSwitcher = (ImageSwitcher) findViewById(R.id.ImageSwitcher_QuestionImage);
+        questionImageSwitcher.setImageResource(R.drawable.noquestion);
+
+        // Disable yes button
+        Button yesButton = (Button) findViewById(R.id.Button_Yes);
+        yesButton.setEnabled(false);
+
+        // Disable no button
+        Button noBUtton = (Button) findViewById(R.id.Button_No);
+        noBUtton.setEnabled(false);
     }
 
-    public Drawable getQuestionImageDrawable(int questionNumber) {
+    public void onYesButton(View view) {
+        handleAnswerAndShowNextQuestion(true);
+    }
+
+
+    public void onNoButton (View view) {
+        handleAnswerAndShowNextQuestion(false);
+    }
+
+    private Drawable getQuestionImageDrawable(int questionNumber) {
         Drawable image;
         URL imageUrl;
         try {
@@ -155,13 +203,13 @@ public class QuizGameActivity extends QuizActivity {
         // Update score if answer is "yes"
         SharedPreferences.Editor editor = mGameSettings.edit();
         editor.putInt(GAME_PREFERENCES_CURRENT_QUESTION, nextQuestionNumber);
-        if (bAnswer == true) {
+        if (bAnswer) {
             editor.putInt(GAME_PREFERENCES_SCORE, curScore + 1);
         }
-        editor.commit();
+        editor.apply();
 
         // Load the next question, handling if there are no more questions
-        if (mQuestions.containsKey(nextQuestionNumber) == false) {
+        if (mQuestions.containsKey(nextQuestionNumber)) {
             // Load next batch
             try {
                 loadQuestionBatch(nextQuestionNumber);
@@ -170,7 +218,7 @@ public class QuizGameActivity extends QuizActivity {
             }
         }
 
-        if (mQuestions.containsKey(nextQuestionNumber) == true) {
+        if (mQuestions.containsKey(nextQuestionNumber)) {
             //Update question text
             TextSwitcher questionTextSwitcher = (TextSwitcher) findViewById(R.id.TextSwitcher_QuestionText);
             questionTextSwitcher.setText(getQuestionText(nextQuestionNumber));
@@ -180,7 +228,7 @@ public class QuizGameActivity extends QuizActivity {
             Drawable image = getQuestionImageDrawable(nextQuestionNumber);
             questionImageSwitcher.setImageDrawable(image);
         } else {
-
+            handleNoQuestions();
         }
     }
 
@@ -192,7 +240,7 @@ public class QuizGameActivity extends QuizActivity {
      */
     private String getQuestionImageUrl(Integer questionNumber) {
         String url = null;
-        Question curQuestion = (Question) mQuestions.get(questionNumber);
+        Question curQuestion = mQuestions.get(questionNumber);
         if (curQuestion != null) {
             url = curQuestion.mImageUrl;
         }
@@ -207,7 +255,8 @@ public class QuizGameActivity extends QuizActivity {
      */
     private String getQuestionText(Integer questionNumber) {
         String text = null;
-        Question curQuestion = mQuestions.get(questionNumber);
+        Question curQuestion;
+        curQuestion = mQuestions.get(questionNumber);
         if (curQuestion != null) {
             text = curQuestion.mText;
         }
@@ -249,7 +298,7 @@ public class QuizGameActivity extends QuizActivity {
                 if (strName.equals(XML_TAG_QUESTION)) {
 
                     String questionNumber = questionBatch.getAttributeValue(null, XML_TAG_QUESTION_ATTRIBUTE_NUMBER);
-                    Integer questionNum = new Integer(questionNumber);
+                    Integer questionNum = Integer.valueOf(questionNumber);
                     String questionText = questionBatch.getAttributeValue(null, XML_TAG_QUESTION_ATTRIBUTE_TEXT);
                     String questionImageUrl = questionBatch.getAttributeValue(null, XML_TAG_QUESTION_ATTRIBUTE_IMAGEURL);
 

@@ -59,4 +59,5 @@
     <string name="game_button_yes">YES</string>
     <string name="game_button_no">NO</string>
 
+    <string name="no_questions">No more questions available. Try back later.</string>
 </resources>
