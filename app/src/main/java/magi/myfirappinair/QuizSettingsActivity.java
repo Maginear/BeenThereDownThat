@@ -31,8 +31,6 @@ import java.util.prefs.PreferenceChangeEvent;
 
 public class QuizSettingsActivity extends QuizActivity {
 
-
-    private static final String DEBUG_TAG = "MyActivity Preferences";
     private static final int DATE_DIALOG_ID = 0;
     private static final int PASSWORD_DIALOG_ID = 1;
 

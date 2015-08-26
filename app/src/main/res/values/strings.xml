@@ -55,4 +55,8 @@
     <string name="set_nickname">Set Nickname</string>
     <string name="set_birth">Set BirthDate</string>
     <string name="set_password">Set Password</string>
+
+    <string name="game_button_yes">YES</string>
+    <string name="game_button_no">NO</string>
+
 </resources>
