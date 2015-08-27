@@ -1,9 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="magi.myfirappinair.QuizSettingsActivity">
 
     <LinearLayout
@@ -11,127 +13,164 @@
         android:layout_height="match_parent"
         android:background="@drawable/bkgrd01"
         android:orientation="vertical">
+
         <RelativeLayout
+            android:id="@+id/RelativeLayout01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:id="@+id/RelativeLayout01">
+            android:layout_alignParentTop="true">
+
             <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:src="@mipmap/ic_launcher_ironman"
-                android:id="@+id/imageView" />
+                android:src="@mipmap/ic_launcher_ironman" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/setting"
-                android:textSize="@dimen/menu_item_size"
-                android:textColor="@color/title_glow"
-                android:autoText="true"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:autoText="true"
+                android:text="@string/setting"
+                android:textColor="@color/title_glow"
+                android:textSize="@dimen/menu_item_size" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:src="@mipmap/ic_launcher_ironman"/>
+                android:src="@mipmap/ic_launcher_ironman" />
         </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:isScrollContainer="true"
-            android:scrollbars="vertical"
-            android:scrollbarAlwaysDrawVerticalTrack="true">
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                <TextView
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nick_name"
-                    android:textColor="@color/title_color"/>
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/EditText_Nickname"
-                    android:text="@string/set_nickname"
-                    android:maxLength="20"
-                    android:maxLines="1"
-                    android:inputType="textPersonName"
-                    android:background="@color/title_color"/>
+                    android:layout_height="match_parent"
+                    android:layout_gravity="fill"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:maxHeight="@dimen/game_button_size"
+                        android:maxWidth="@dimen/game_button_size"
+                        android:onClick="onLaucnCamere"
+                        android:id="@+id/ImageButton_Avatar" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/nick_name"
+                            android:textColor="@color/title_color" />
+
+                        <EditText
+                            android:id="@+id/EditText_Nickname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/title_color"
+                            android:inputType="textPersonName"
+                            android:maxLength="20"
+                            android:maxLines="1"
+                            android:text="@string/set_nickname" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/email"
-                    android:textColor="@color/title_color"/>
+                    android:textColor="@color/title_color" />
+
                 <EditText
+                    android:id="@+id/EditText_Email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/set_email"
-                    android:id="@+id/EditText_Email"
+                    android:background="@color/title_color"
                     android:maxLines="1"
-                    android:background="@color/title_color"/>
+                    android:text="@string/set_email" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/password"
-                    android:textColor="@color/title_color"/>
+                    android:textColor="@color/title_color" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <Button
+                        android:id="@+id/Button_Password"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/password_button"
-                        android:id="@+id/Button_Password"
-                        android:onClick="onSetPasswordButtonClick"/>
+                        android:onClick="onSetPasswordButtonClick"
+                        android:text="@string/password_button" />
+
                     <TextView
+                        android:id="@+id/TextView_Password_Info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/set_password_no"
                         android:gravity="center"
-                        android:textColor="@color/title_color"
-                        android:id="@+id/TextView_Password_Info" />
+                        android:text="@string/set_password_no"
+                        android:textColor="@color/title_color" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <Button
+                        android:id="@+id/Button_DOB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/birth_data_button"
-                        android:id="@+id/Button_DOB"
-                        android:onClick="onPickDateButtonClick"/>
+                        android:onClick="onPickDateButtonClick"
+                        android:text="@string/birth_data_button" />
+
                     <TextView
+                        android:id="@+id/TextViewBirthDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/birth_data"
                         android:gravity="center"
-                        android:textColor="@color/title_color"
-                        android:id="@+id/TextViewBirthDate"/>
+                        android:text="@string/birth_data"
+                        android:textColor="@color/title_color" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/gender"
                     android:gravity="left"
-                    android:textColor="@color/title_color"/>
+                    android:text="@string/gender"
+                    android:textColor="@color/title_color" />
+
                 <Spinner
+                    android:id="@+id/Spinner_Gender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/Spinner_Gender"
-                    android:gravity="center"
+                    android:background="@color/title_color"
                     android:entries="@array/gender"
-                    android:background="@color/title_color" />
+                    android:gravity="center" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

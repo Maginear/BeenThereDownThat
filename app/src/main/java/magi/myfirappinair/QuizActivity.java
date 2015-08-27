@@ -16,7 +16,7 @@ public class QuizActivity extends ActionBarActivity {
     public static final String GAME_PREFERENCES_PASSWORD = "Password";
     public static final String GAME_PREFERENCES_DOB = "DOB";
     public static final String GAME_PREFERENCES_GENDER = "Gender";
-    public static final String DEBUG_TAG = "MyActivity Preferences";
+    public static final String GAME_PREFERENCES_AVATAR = "Avatar";
     public static final String GAME_PREFERENCES_SCORE = "Score";
     public static final String GAME_PREFERENCES_CURRENT_QUESTION = "CurQuestion";
     public static final String XML_TAG_QUESTION_BLOCK = "questions";
@@ -24,7 +24,11 @@ public class QuizActivity extends ActionBarActivity {
     public static final String XML_TAG_QUESTION_ATTRIBUTE_NUMBER = "number";
     public static final String XML_TAG_QUESTION_ATTRIBUTE_TEXT = "text";
     public static final String XML_TAG_QUESTION_ATTRIBUTE_IMAGEURL = "imageUrl";
+    public static final String DEBUG_TAG = "MyActivity Preferences";
+
     public static final int QUESTION_BATCH_SIZE = 15;
+    public static final int TAKE_AVATAR_CAMERA_REQUEST = 1;
+    public static final int TAKE_AVATAR_GALLERY_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

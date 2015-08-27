@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -147,8 +146,8 @@ public class QuizGameActivity extends QuizActivity {
         yesButton.setEnabled(false);
 
         // Disable no button
-        Button noBUtton = (Button) findViewById(R.id.Button_No);
-        noBUtton.setEnabled(false);
+        Button noButton = (Button) findViewById(R.id.Button_No);
+        noButton.setEnabled(false);
     }
 
     public void onYesButton(View view) {
@@ -162,7 +161,7 @@ public class QuizGameActivity extends QuizActivity {
 
     private Drawable getQuestionImageDrawable(int questionNumber) {
         Drawable image;
-        URL imageUrl;
+        URL imageUrl; 
         try {
             imageUrl = new URL(getQuestionImageUrl(questionNumber));
             InputStream stream = imageUrl.openStream();

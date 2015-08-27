@@ -1,10 +1,12 @@
 package magi.myfirappinair;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +60,24 @@ public class QuizSettingsActivity extends QuizActivity {
         });
         spinner.setSelection(2);
         readPreferences();
+
+        ImageButton avatarButton = (ImageButton) findViewById(R.id.ImageButton_Avatar);
+        avatarButton.setImageDrawable(getResources().getDrawable(R.drawable.avatar));
+
+        avatarButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // TODO: launch Image Picker and Save Image as Avatar
+                Toast.makeText(QuizSettingsActivity.this, "Long Click!", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        avatarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(QuizSettingsActivity.this, "Short Click!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -99,6 +120,7 @@ public class QuizSettingsActivity extends QuizActivity {
         SharedPreferences mGameSettings = getSharedPreferences(GAME_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mGameSettings.edit();
 
+
         //TODO get the contents of all preferences and save them
         final EditText nicknameText = (EditText) findViewById(R.id.EditText_Nickname);
         final EditText emailText = (EditText) findViewById(R.id.EditText_Email);
@@ -127,6 +149,29 @@ public class QuizSettingsActivity extends QuizActivity {
                 GAME_PREFERENCES_PASSWORD, "Not set"));
         Log.d(DEBUG_TAG, "DOB is: " + android.text.format.DateFormat.format(
                 "MMMM dd, yyyy", mGameSettings.getLong(GAME_PREFERENCES_DOB, 0)));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case TAKE_AVATAR_CAMERA_REQUEST: {
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    // Avatar camera mode was canceled.
+                } else if (resultCode == Activity.RESULT_OK) {
+                    //TODO: Handle photo taken with camera
+                }
+                break;
+            }
+            case TAKE_AVATAR_GALLERY_REQUEST: {
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    // Avatar gallery request was canceled.
+                } else if (resultCode == Activity.RESULT_OK) {
+                    // TODO: Handle image chosen from gallery
+                }
+                break;
+            }
+        }
     }
 
     public void readPreferences(){
@@ -294,6 +339,10 @@ public class QuizSettingsActivity extends QuizActivity {
             }*/
         }
         super.onPrepareDialog(id, dialog);
+    }
+
+    public void onLaunchCamera(View view) {
+        // TODO: launch the camera and Save the Photo as the Avatar
     }
 
 }
